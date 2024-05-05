@@ -1,0 +1,26 @@
+{
+    "configurations": [
+        
+        
+        {
+            "name": "Flutter (Chrome)",
+            "program": "lib/main.dart",
+            "deviceId": "chrome",
+            "request": "launch",
+            "type": "dart",
+            "args": ["--web-port=7357"],
+            
+            
+        },
+        
+        {
+            "name": "Flutter Web Release",
+            "program": "lib/main.dart",
+                "request": "launch",
+                "type": "dart",
+                "args": ["run", "--release", "--web-port", "7357"],
+                "flutterMode": "release"
+              }
+          
+    ]
+}
