@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:intl/intl.dart';
 import 'package:student_verification_system/constants/constants.dart';
 import 'package:student_verification_system/models/meet_link.dart';
 import 'package:student_verification_system/theme/pallete.dart';
-// import 'package:twitter_clone/features/tweet/controller/tweet_controller.dart';
 
 class MeetCard extends ConsumerWidget {
   final MeetLinkModel meetLink;
@@ -35,15 +36,12 @@ class MeetCard extends ConsumerWidget {
             Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const CircleAvatar(
+                CircleAvatar(
                   // foregroundImage: NetworkImage(user.profilePic),
                   backgroundColor: Pallete.backgroundColor,
-                  backgroundImage: NetworkImage(
-                    // ref.watch(authStateChangeProvider).whenData((value) => value!.photoURL)
-                    AssetsConstants.googleMeetLogoPNG,
-                    // scale: 100,
-                  ),
                   radius: 20,
+                  child: SvgPicture.asset(AssetsConstants.googleMeetLogo,
+                      height: 40),
                 ),
                 const SizedBox(
                   width: 10,

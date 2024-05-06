@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:student_verification_system/common/common.dart';
 import 'package:student_verification_system/constants/constants.dart';
+import 'package:student_verification_system/core/core.dart';
 import 'package:student_verification_system/feature/auth/controller/auth_controller.dart';
 import 'package:student_verification_system/feature/auth/view/class_selection_button.dart';
 import 'package:student_verification_system/feature/auth/view/google_signin_button.dart';
-import 'package:student_verification_system/theme/pallete.dart';
 
 class SignInView extends ConsumerStatefulWidget {
   const SignInView({super.key});
@@ -19,7 +19,7 @@ class SignInView extends ConsumerStatefulWidget {
 
 class _SignInViewState extends ConsumerState<SignInView> {
   AppBar appBar = UIConstants.appBar();
-  String _standard = '12 A';
+  String _standard = '';
   List<String> meetClasses = ['12 A', '12 B'];
   @override
   Widget build(BuildContext context) {
@@ -35,18 +35,16 @@ class _SignInViewState extends ConsumerState<SignInView> {
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
                     children: [
-                      // Flex(direction: Axis.vertical),
                       const SizedBox(height: 100),
                       const Text(
                         'Welcome to Secure Meet.\nTrying to make things Secure and Practical.',
                         style: TextStyle(fontSize: 30),
                       ),
-                      // Flex(direction: Axis.vertical),
                       const SizedBox(height: 45),
                       const Text(
-                        "Please choose your class",
+                        "Please choose your class correctly. This cannot be changed later.",
                         style: TextStyle(
-                            color: Pallete.greyColor,
+                            color: Color.fromARGB(255, 231, 100, 100),
                             fontSize: 20,
                             fontWeight: FontWeight.bold),
                       ),
@@ -78,52 +76,24 @@ class _SignInViewState extends ConsumerState<SignInView> {
                           ),
                         ),
                       ),
-
-                      // SizedBox(
-                      //   height: 60,
-                      //   child: ListView.builder(
-                      //     itemExtent: MediaQuery.of(context).size.width / meetClasses.length,
-                      //     scrollDirection: Axis.horizontal,
-                      //     itemCount: meetClasses.length,
-                      //     itemBuilder: (context, index) {
-                      //       return ClassSelectionBUtton(
-                      //           onTap: () {
-                      //             setState(() {
-                      //               _standard = meetClasses[index];
-                      //             });
-                      //           },
-                      //           label: meetClasses[index],
-                      //           backgroundColor: _standard != meetClasses[index]
-                      //               ? Color.fromARGB(255, 26, 26, 26)
-                      //               : const Color.fromARGB(255, 83, 83, 83));
-                      //     },
-                      //   ),
-                      // ),
-                      // Row(
-                      //   mainAxisAlignment: MainAxisAlignment.spaceAround,
-                      //   children: [
-                      //     ClassSelectionBUtton(
-                      //         onTap: () {},
-                      //         label: "12 A",
-                      //         backgroundColor: Color.fromARGB(255, 26, 26, 26)),
-                      //     ClassSelectionBUtton(
-                      //       onTap: () {
-                      //         setState(() {});
-                      //       },
-                      //       label: "12 B",
-                      //       backgroundColor: Color.fromARGB(255, 26, 26, 26),
-                      //     )
-                      //   ],
-                      // ),
                       const SizedBox(height: 45),
                       SizedBox(
                         // height,
-                        child: GoogleSignInButton(onTap: () {
-                          ref
-                              .watch(authControllerProvider.notifier)
-                              .signInWithGoogle(
-                                  context: context, standard: _standard);
-                        }),
+                        child: GoogleSignInButton(
+                          icon: AssetsConstants.googleLogo,
+                          label: "Sign in with Google",
+                          onTap: () {
+                            if (_standard == '') {
+                              showSnackBar(context,
+                                  "Please select your class first to sign in");
+                            } else {
+                              ref
+                                  .watch(authControllerProvider.notifier)
+                                  .signInWithGoogle(
+                                      context: context, standard: _standard);
+                            }
+                          },
+                        ),
                       ),
                     ],
                   ),

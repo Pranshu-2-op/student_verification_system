@@ -1,14 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:student_verification_system/constants/constants.dart';
 import 'package:student_verification_system/theme/pallete.dart';
 
 class GoogleSignInButton extends StatelessWidget {
   final VoidCallback onTap;
   final backgroundColor = Pallete.whiteColor;
   final textColor = Pallete.backgroundColor;
-  final label = 'Sign in with Google';
-  const GoogleSignInButton({super.key, required this.onTap});
+  final String label;
+  final String icon;
+  const GoogleSignInButton(
+      {super.key,
+      required this.onTap,
+      required this.label,
+      required this.icon});
 
   @override
   Widget build(BuildContext context) {
@@ -25,7 +29,13 @@ class GoogleSignInButton extends StatelessWidget {
         backgroundColor: backgroundColor,
         label: Row(
           children: [
-            SvgPicture.asset(AssetsConstants.googleLogo),
+            SvgPicture.asset(
+              icon,
+              height: 25,
+            ),
+            const SizedBox(
+              width: 20,
+            ),
             Text(
               " $label",
               style: TextStyle(

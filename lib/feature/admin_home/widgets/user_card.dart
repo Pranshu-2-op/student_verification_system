@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:student_verification_system/models/user_model.dart';
 import 'package:student_verification_system/theme/pallete.dart';
-// import 'package:twitter_clone/features/tweet/controller/tweet_controller.dart';
 
 class UserCard extends ConsumerWidget {
   final UserModel user;

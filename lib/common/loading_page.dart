@@ -13,7 +13,7 @@ class Loader extends StatelessWidget {
         alignment: Alignment.center,
         children: [
           SvgPicture.asset(
-            AssetsConstants.secureEduLogo,
+            AssetsConstants.googleLogo,
             height: 30,
           ),
           const CircularProgressIndicator(
@@ -41,7 +41,7 @@ class LoadingPage extends StatelessWidget {
               alignment: Alignment.center,
               children: [
                 SvgPicture.asset(
-                  AssetsConstants.secureEduLogo,
+                  AssetsConstants.googleLogo,
                   height: 30,
                 ),
                 const CircularProgressIndicator(

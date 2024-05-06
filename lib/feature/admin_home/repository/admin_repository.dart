@@ -16,7 +16,7 @@ class AdminRepositorry {
 
   Future<List<DocumentSnapshot>> getAllUsers() async {
     // getting tweets from newer to older
-    List<DocumentSnapshot> documents = await _users.get().then(
+    List<DocumentSnapshot> documents = await _users.orderBy('name').get().then(
       (value) {
         List<DocumentSnapshot> docs = [];
         for (var document in value.docs) {
@@ -31,7 +31,7 @@ class AdminRepositorry {
 
   Future<List<DocumentSnapshot>> getAllMeetLinks() async {
     // getting tweets from newer to older
-    List<DocumentSnapshot> documents = await _meet.get().then(
+    List<DocumentSnapshot> documents = await _meet.orderBy('time').get().then(
       (value) {
         List<DocumentSnapshot> docs = [];
         for (var document in value.docs) {

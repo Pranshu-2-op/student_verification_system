@@ -12,6 +12,11 @@ final getAllMeetLinkProvider = FutureProvider.autoDispose((ref) async {
   return tweetController.getAllMeetLinks();
 });
 
+final refreshAllMeetLinkProvider = Provider.autoDispose<void>((ref) {
+  // Watch the getAllMeetLinkProvider to trigger a refresh when needed
+  return ref.refresh(getAllMeetLinkProvider);
+});
+
 final getAllUserProvider = FutureProvider.autoDispose((ref) async {
   final tweetController = ref.watch(adminControllerProvider.notifier);
   return tweetController.getAllUsers();
@@ -29,7 +34,7 @@ class AdminController extends StateNotifier<bool> {
   }
 
   Future<List<DocumentSnapshot>> getAllMeetLinks() async {
-    final tweetList = await _admin.getAllMeetLinks();
-    return tweetList;
+    final allMeetLinks = await _admin.getAllMeetLinks();
+    return allMeetLinks;
   }
 }

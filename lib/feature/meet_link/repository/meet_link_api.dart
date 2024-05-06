@@ -1,3 +1,5 @@
+import 'dart:html';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fpdart/fpdart.dart';
@@ -34,9 +36,6 @@ class MeetLinkAPI implements IMeetLinkAPI {
 
   Future<List<DocumentSnapshot>> getMeetLink(
       {required UserModel userModel}) async {
-    // CollectionReference get _meet => _db.collection(FireBaseConstants.meetLinkCollection);
-    // print(userModel);
-    // print("standard ${userModel.standard}");
     List<DocumentSnapshot> documents = await _meet
         .where('standard', isEqualTo: userModel.standard)
         .get()
@@ -45,8 +44,12 @@ class MeetLinkAPI implements IMeetLinkAPI {
       for (var document in value.docs) {
         docs.add(document);
       }
+      if (value.size > 1) {
+        docs.sort((a, b) => a['time'].compareTo(b['time']));
+      }
       return docs;
     });
+
     // print("from api $documents");
     return documents;
   }

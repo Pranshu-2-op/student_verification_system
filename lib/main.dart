@@ -3,8 +3,10 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:student_verification_system/common/common.dart';
+import 'package:student_verification_system/constants/ui_constants.dart';
 import 'package:student_verification_system/feature/auth/controller/auth_controller.dart';
 import 'package:student_verification_system/feature/auth/view/sign_in_view.dart';
+import 'package:student_verification_system/feature/meet_link/view/create_meet_link.dart';
 import 'package:student_verification_system/feature/user_home/view/user_home.dart';
 import 'package:student_verification_system/firebase_options.dart';
 // import 'package:firebase_auth/firebase_auth.dart';
@@ -59,25 +61,12 @@ class _MyAppState extends ConsumerState<MyApp> {
         home: ref.watch(authStateChangeProvider).when(
             data: (user) {
               if (user != null) {
-                // print(user);
                 getVerifiedData(ref, user);
-                // print(isVerified(ref));
                 if (isVerified(ref)) {
                   getData(ref, user);
-                  // print(isAdminOf(ref));
-                  // if (isAdminOf(ref) == '12 A') {
-                  // return const ErrorPage(
-                  //     error:
-
-                  //         "You are not verified.\nPlease wait for some time");
-                  // return const AdminHomeView();
-                  //   } else {
                   return const UserHomeView();
-                  //   }
                 } else {
-                  return const ErrorPage(
-                      error:
-                          "You are not verified.\nPlease wait for some time");
+                  return const UnVerifiedPage();
                 }
               } else {
                 return const SignInView();

@@ -2,17 +2,13 @@
 import 'dart:js' as js;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_svg/svg.dart';
-import 'package:intl/intl.dart';
 import 'package:student_verification_system/common/common.dart';
 import 'package:student_verification_system/constants/constants.dart';
-import 'package:student_verification_system/core/core.dart';
 import 'package:student_verification_system/feature/admin_home/view/admin_home_controller.dart';
 import 'package:student_verification_system/feature/auth/controller/auth_controller.dart';
 import 'package:student_verification_system/feature/meet_link/controller/meet_link_controller.dart';
 import 'package:student_verification_system/models/meet_link.dart';
 import 'package:student_verification_system/theme/theme.dart';
-// import 'package:http/http.dart' as http;
 
 class UserHomeView extends ConsumerStatefulWidget {
   const UserHomeView({super.key});
@@ -31,8 +27,6 @@ class _UserHomeViewState extends ConsumerState<UserHomeView> {
   Widget build(BuildContext context) {
     final userModel = ref.watch(userProvider);
 
-    // print(userModel);
-    // print(userModel);
     ref.watch(userProvider.notifier).stream.listen((event) {
       if (event != null) {
         if (event.isAdminOf == '12 A') {
@@ -41,7 +35,11 @@ class _UserHomeViewState extends ConsumerState<UserHomeView> {
       }
     });
     return Scaffold(
-      appBar: UIConstants.appBar(),
+      appBar: UIConstants.appBarHomePage(
+          context1: context,
+          refresh: () {
+            ref.watch(meetProviderRefresh(userModel!));
+          }),
       body: userModel == null
           ? const Loader()
           : ref.watch(meetProvider(userModel)).when(
@@ -49,48 +47,59 @@ class _UserHomeViewState extends ConsumerState<UserHomeView> {
                   // print(meetLinks);
                   return Padding(
                     padding: const EdgeInsets.all(20.0),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      // mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text(
-                          "Welcome, ${userModel.name}",
-                          style: const TextStyle(fontSize: 30),
-                        ),
-                        if (meetLinks.isNotEmpty) ...[
-                          const SizedBox(
-                            height: 40,
+                    child: SingleChildScrollView(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        // mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(
+                            "Welcome, ${userModel.name}",
+                            style: const TextStyle(fontSize: 30),
                           ),
-                          const Text(
-                            "Your meet links are",
-                            style: TextStyle(fontSize: 30),
+                          if (meetLinks.isNotEmpty) ...[
+                            const SizedBox(
+                              height: 40,
+                            ),
+                            const Text(
+                              "Your meet links are",
+                              style: TextStyle(fontSize: 30),
+                            ),
+                          ],
+                          if (meetLinks.isEmpty) ...[
+                            const SizedBox(
+                              height: 100,
+                            ),
+                            const Text(
+                              "No meetings scheduled please refresh or check after some time.",
+                              style: TextStyle(fontSize: 30),
+                            ),
+                          ],
+                          if (meetLinks.isNotEmpty) ...[
+                            Column(
+                              children: List.generate(
+                                meetLinks.length,
+                                (index) {
+                                  final meetLinkModel = meetLinks[index];
+                                  return GoogleMeetLinkButton(
+                                    context1: context,
+                                    meetLinkModel: MeetLinkModel.fromMap(
+                                      meetLinkModel.data()
+                                          as Map<String, dynamic>,
+                                    ),
+                                  );
+                                },
+                              ),
+                            ),
+                          ],
+                          const SizedBox(
+                            height: 20,
+                          ),
+                          Text(
+                            "Your class: ${userModel.standard}",
+                            style: const TextStyle(fontSize: 20),
                           ),
                         ],
-                        if (meetLinks.isEmpty) ...[
-                          const SizedBox(
-                            height: 100,
-                          ),
-                          const Text(
-                            "No meetings scheduled please refresh or check after some time.",
-                            style: TextStyle(fontSize: 30),
-                          ),
-                        ],
-                        Expanded(
-                          child: ListView.builder(
-                            itemCount: meetLinks.length,
-                            scrollDirection: Axis.vertical,
-                            itemBuilder: (context, index) {
-                              final meetLinkModel = meetLinks[index];
-                              // print(meetLinkModel);
-                              return GoogleMeetLinkButton(
-                                meetLinkModel: MeetLinkModel.fromMap(
-                                    meetLinkModel.data()
-                                        as Map<String, dynamic>),
-                              );
-                            },
-                          ),
-                        )
-                      ],
+                      ),
                     ),
                   );
                 },
@@ -99,90 +108,20 @@ class _UserHomeViewState extends ConsumerState<UserHomeView> {
                 },
                 loading: () => const Loader(),
               ),
-    );
-  }
-}
-
-class GoogleMeetLinkButton extends StatelessWidget {
-  // final VoidCallback onTap;
-  final MeetLinkModel meetLinkModel;
-  final backgroundColor = Pallete.whiteColor;
-  final textColor = Pallete.backgroundColor;
-  final label = 'Join Meet';
-  const GoogleMeetLinkButton({super.key, required this.meetLinkModel});
-
-  @override
-  Widget build(BuildContext context) {
-    DateTime meetTime = meetLinkModel.time;
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 20),
-      child: Column(
-        // crossAxisAlignment: ,
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: [
-              Text("Subject: ${meetLinkModel.subject}"),
-              Text('Time: ${DateFormat('h:mm a').format(meetTime)}'),
-            ],
-          ),
-          //  Row(
-          //   mainAxisAlignment: MainAxisAlignment.spaceAround,
-          //   children: [
-          //     Text("Subject: "),
-          //     Text('Time: '),
-          //   ],
-          // ),
-          InkWell(
+      bottomNavigationBar: BottomAppBar(
+        color: Pallete.backgroundColor,
+        elevation: 0,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 130),
+          child: ContactUsButton(
             onTap: () {
-              redirectToMeet(context: context, link: meetLinkModel.link);
+              js.context.callMethod('open', [
+                "https://docs.google.com/forms/d/e/1FAIpQLSfY8x5h6jN_s5LIcAZ_TqbUPXu5Ia4ZV9YD_lFg8jXaEzesHg/viewform?usp=sf_link"
+              ]);
             },
-            child: Chip(
-              labelPadding: const EdgeInsets.symmetric(horizontal: 10),
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(25),
-                  side: BorderSide(
-                    width: 10,
-                    color: backgroundColor,
-                  )),
-              backgroundColor: backgroundColor,
-              label: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  SvgPicture.asset(
-                    AssetsConstants.googleMeetLogo,
-                    height: 30,
-                  ),
-                  const SizedBox(
-                    width: 10,
-                  ),
-                  Text(
-                    " $label",
-                    style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 16,
-                        color: textColor),
-                  ),
-                ],
-              ),
-            ),
-          )
-        ],
+          ),
+        ),
       ),
     );
-  }
-}
-
-void redirectToMeet(
-    {required String link, required BuildContext context}) async {
-  if (link == '') {
-    showSnackBar(context, "No meeting link is found");
-    return;
-  }
-  try {
-    js.context.callMethod('open', [link]);
-  } catch (e) {
-    // Error occurred
-    showSnackBar(context, "No meeting link is found");
   }
 }

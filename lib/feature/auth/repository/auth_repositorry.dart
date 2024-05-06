@@ -12,7 +12,6 @@ final authRepositorryProvider = Provider(
 );
 
 class AuthRepositorry {
-  // final FirebaseFirestore _firestore;
   final FirebaseAuth _auth;
   final GoogleSignIn _googleSignIn;
 
@@ -20,7 +19,6 @@ class AuthRepositorry {
     required FirebaseAuth auth,
     required GoogleSignIn googleSignIn,
   })  : _auth = auth,
-        // _firestore = firestore,
         _googleSignIn = googleSignIn;
 
   Stream<User?> get authStateChange {
@@ -41,6 +39,16 @@ class AuthRepositorry {
       return right(userCredential);
     } catch (E, stackTrace) {
       return left(Failure("Google SignIn Error", stackTrace));
+    }
+  }
+
+  FutureEither<void> signOut() async {
+    try {
+      await _auth.signOut();
+      return right(null);
+    } on FirebaseAuthException catch (e, stackTrace) {
+      return left(
+          Failure(e.message ?? 'Some unexpected error occured', stackTrace));
     }
   }
 }
